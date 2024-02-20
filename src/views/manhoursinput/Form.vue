@@ -10,7 +10,7 @@
         <div class="form-group row">
           <label for="inputPassword" class="col-sm-3 col-form-label">Input Type</label>
           <div class="col-sm-9">
-            <select class="form-control" v-model="manhour.inputType" @blur="changeInputType()">
+            <select class="form-control" v-model="manhour.inputType">
               <option value="Daily" selected>Daily</option>
               <option value="Monthly">Monthly</option>
             </select>
@@ -129,7 +129,7 @@ export default {
         pjSbno: "",
         processCode: "",
         ym: "",
-        workingDate: "",
+        workingDate: new Date().toISOString().slice(0, 19) + 'Z',
         actualManHour: ""
       },
     };
@@ -197,52 +197,62 @@ export default {
       return isValid;
     },
     save() {
+      console.log(JSON.stringify(this.manhour));
       if (this.validate()) {
-        // Tạo một Promise mới
-        new Promise((resolve, reject) => {
-          // Sử dụng fetch API để thực hiện yêu cầu POST
-          debugger
-          fetch("https://localhost:5001/api/v1/export/manhourinput", {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              // Thêm headers khác nếu cần
-            },
-            body: JSON.stringify(this.manhour) // chuyển đổi object manhour thành chuỗi JSON
-          })
-            .then(response => {
-              if (!response.ok) {
-                // Nếu phản hồi không thành công, đẩy lỗi vào Promise
-                throw new Error('Network response was not ok');
-              }
-              return response.json(); // Chuyển đổi phản hồi thành JSON
-            })
-            .then(data => {
-              // Xử lý dữ liệu JSON từ phản hồi
-              console.log('Success:', data);
-              resolve(data); // Giải quyết Promise với dữ liệu
-            })
-            .catch(error => {
-              // Xử lý lỗi
-              console.error('Error:', error);
-              reject(error); // Từ chối Promise với lỗi
-            });
+        // Sử dụng fetch API để thực hiện yêu cầu POST
+        fetch("https://localhost:5001/api/v1/export/manhourinput", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            // Thêm headers khác nếu cần
+          },
+          body: JSON.stringify(this.manhour) // chuyển đổi object manhour thành chuỗi JSON
         })
+          .then(response => {
+            if (!response.ok) {
+              // Nếu phản hồi không thành công, đẩy lỗi vào Promise
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json(); // Chuyển đổi phản hồi thành JSON
+          })
           .then(data => {
-
+            // Xử lý dữ liệu JSON từ phản hồi
             console.log('Success:', data);
             // Xử lý sau khi Promise được giải quyết
             // Có thể là chuyển hướng người dùng hoặc hiển thị thông báo thành công
           })
           .catch(error => {
-            console.log('Success:', error);
-            // Xử lý sau khi có lỗi
+            // Xử lý lỗi
+            console.error('Error:', error);
             // Hiển thị thông báo lỗi cho người dùng
           });
       }
     }
+    //,
+    // save() {
+    //   fetch('https://localhost:5001/api/v1/export/manhourinput', {
+    //     method: 'GET',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       // Bạn cần thêm các headers khác nếu API yêu cầu
+    //     }
+    //   })
+    //     .then(response => {
+    //       if (!response.ok) {
+    //         throw new Error('Network response was not ok ' + response.statusText);
+    //       }
+    //       return response.json(); // hoặc response.text() nếu API trả về dữ liệu dạng text
+    //     })
+    //     .then(data => {
+    //       console.log(data);
+    //       // Xử lý dữ liệu nhận được từ API tại đây
+    //     })
+    //     .catch(error => {
+    //       console.error('There has been a problem with your fetch operation:', error);
+    //       // Xử lý lỗi tại đây
+    //     });
 
-
+    // }
   },
 };
 </script>
