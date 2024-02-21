@@ -6,7 +6,7 @@
     </div>
 
     <div class="container">
-      <form @submit.prevent="save()">
+      <form @submit.prevent="save()"  @reset.prevent="cancel()">
         <div class="form-group row">
           <label for="inputPassword" class="col-sm-3 col-form-label">Input Type</label>
           <div class="col-sm-9">
@@ -20,7 +20,7 @@
           </div>
         </div>
         <div class="form-group row">
-          <label for="inputPassword" class="col-sm-3 col-form-label">Man Hour Act Code</label>
+          <label for="inputPassword" class="col-sm-3 col-form-label">Act Code</label>
           <div class="col-sm-9">
             <input type="text" class="form-control" v-model="manhour.actCode"
               v-bind:class="{ 'is-invalid': errors.actCode }" />
@@ -42,7 +42,7 @@
         </div>
 
         <div class="form-group row">
-          <label for="inputPassword" class="col-sm-3 col-form-label">Project Sbno Code</label>
+          <label for="inputPassword" class="col-sm-3 col-form-label">Project Sbno</label>
           <div class="col-sm-9">
             <input type="text" class="form-control" v-model="manhour.pjSbno"
               v-bind:class="{ 'is-invalid': errors.pjSbno }" />
@@ -100,6 +100,13 @@
           <div class="col-sm-9 text-left">
             <button type="submit" class="btn btn-primary">Save</button> &nbsp;
             <button type="reset" class="btn btn-danger">Cancel</button>
+            <div style="height: 16px;"></div>
+            <div v-if="info.msg_success" class="alert alert-success" role="alert">
+              Insert success!!!
+            </div>
+            <div v-if="info.msg_error" class="alert alert-danger" role="alert">
+              Insert Fail!!!
+            </div>
           </div>
         </div>
       </form>
@@ -132,10 +139,15 @@ export default {
         workingDate: new Date().toISOString().slice(0, 19) + 'Z',
         actualManHour: ""
       },
+      info: {
+        msg_success: "",
+        msg_error: ""
+      }
     };
   },
   methods: {
     validate() {
+      console.log("errorssssss");
       var isValid = true;
       this.errors = {
         inputType: "",
@@ -156,15 +168,23 @@ export default {
       if (!this.manhour.actCode) {
         this.errors.actCode = "Act Code is required!!!";
         isValid = false;
+      } else if (this.manhour.actCode.length > 10) {
+        this.errors.actCode = "Act Code must be less than 10 characters!!!";
       }
 
       if (!this.manhour.pjCode) {
         this.errors.pjCode = "Project Code is required!!!";
         isValid = false;
+      } else if (this.manhour.pjCode.length > 20) {
+        this.errors.pjCode = "Project Code must be less than 20 characters!!!";
+        isValid = false;
       }
 
       if (!this.manhour.pjSbno) {
         this.errors.pjSbno = "PjSbno is required!!!";
+        isValid = false;
+      } else if (this.manhour.pjSbno.length > 2) {
+        this.errors.pjSbno = "Project Sbno  must be less than 2 characters!!!";
         isValid = false;
       }
 
@@ -174,10 +194,16 @@ export default {
       } else if (isNaN(this.manhour.processCode)) {
         this.errors.processCode = "Process Code must be number!!!";
         isValid = false;
+      } else if (this.manhour.processCode.length > 10) {
+        this.errors.processCode = "Process Code must be less than 10 characters!!!";
+        isValid = false;
       }
 
       if (!this.manhour.ym) {
         this.errors.ym = "Year Month is required!!!";
+        isValid = false;
+      } else if (this.manhour.ym.length > 6) {
+        this.errors.ym = "YM must be less than 6 characters!!!";
         isValid = false;
       }
 
@@ -191,6 +217,9 @@ export default {
         isValid = false;
       } else if (isNaN(this.manhour.actualManHour)) {
         this.errors.actualManHour = "Actual Man Hour must be number!!!";
+        isValid = false;
+      } else if (this.manhour.actualManHour.length > 11) {
+        this.errors.actualManHour = "Actual Man Hour must be less than 11 characters!!!";
         isValid = false;
       }
 
@@ -218,41 +247,49 @@ export default {
           .then(data => {
             // Xử lý dữ liệu JSON từ phản hồi
             console.log('Success:', data);
-            // Xử lý sau khi Promise được giải quyết
-            // Có thể là chuyển hướng người dùng hoặc hiển thị thông báo thành công
+            this.manhour = {
+              inputType: "Daily",
+              actCode: "",
+              pjCode: "",
+              pjSbno: "",
+              processCode: "",
+              ym: "",
+              workingDate: new Date().toISOString().slice(0, 19) + 'Z',
+              actualManHour: ""
+            };
+
+            this.info.msg_success = true;
+            setTimeout(() => {
+              this.info.msg_success = "";
+            }, 2000);
+
+
           })
           .catch(error => {
             // Xử lý lỗi
             console.error('Error:', error);
             // Hiển thị thông báo lỗi cho người dùng
+            this.info.msg_error = true;
+            setTimeout(() => {
+              this.info.msg_error = "";
+            }, 2000);
+
           });
       }
-    }
-    //,
-    // save() {
-    //   fetch('https://localhost:5001/api/v1/export/manhourinput', {
-    //     method: 'GET',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       // Bạn cần thêm các headers khác nếu API yêu cầu
-    //     }
-    //   })
-    //     .then(response => {
-    //       if (!response.ok) {
-    //         throw new Error('Network response was not ok ' + response.statusText);
-    //       }
-    //       return response.json(); // hoặc response.text() nếu API trả về dữ liệu dạng text
-    //     })
-    //     .then(data => {
-    //       console.log(data);
-    //       // Xử lý dữ liệu nhận được từ API tại đây
-    //     })
-    //     .catch(error => {
-    //       console.error('There has been a problem with your fetch operation:', error);
-    //       // Xử lý lỗi tại đây
-    //     });
+    },
+    cancel() {
+      this.manhour = {
+        inputType: "Daily",
+        actCode: "",
+        pjCode: "",
+        pjSbno: "",
+        processCode: "",
+        ym: "",
+        workingDate: new Date().toISOString().slice(0, 19) + 'Z',
+        actualManHour: ""
+      };
 
-    // }
+    }
   },
 };
 </script>
