@@ -5,7 +5,7 @@
       <router-link to="/product">Back</router-link>
     </div>
 
-    <div class="container">
+    <div class="container pt-3">
       <form @submit.prevent="save()" @reset.prevent="cancel()">
         <div class="form-group row">
           <label for="inputPassword" class="col-sm-3 col-form-label">Input Type</label>
