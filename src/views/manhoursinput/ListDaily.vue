@@ -31,7 +31,7 @@
             <input type="text" class="form-control" id="ymTo" name="ymTo" maxlength="6" placeholder="YM To">
           </div>
         </div>
-        <button type="submit" class="btn btn-primary">Search</button>
+        <button type="submit" class="btn btn-primary mb-3">Search</button>
       </form>
     </div>
 
