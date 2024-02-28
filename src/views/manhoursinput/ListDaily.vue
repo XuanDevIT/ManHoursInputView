@@ -3,32 +3,33 @@
     <!-- Search Form -->
     <div class="container mt-5">
       <h2>Search</h2>
-      <form>
+      <form @submit.prevent="load()">
         <div class="row">
           <div class="col-md-4 form-group">
 
-            <input type="text" class="form-control" id="actCode" name="actCode" maxlength="10"
+            <input type="text" v-model="obSearch.actCode" class="form-control" id="actCode" name="actCode" maxlength="10"
               placeholder="Enter Act Code">
           </div>
           <div class="col-md-4 form-group">
-            <input type="text" class="form-control" id="pjCode" name="pjCode" maxlength="20"
+            <input type="text" v-model="obSearch.pjCode" class="form-control" id="pjCode" name="pjCode" maxlength="20"
               placeholder="Enter Project Code">
           </div>
           <div class="col-md-4 form-group">
-            <input type="text" class="form-control" id="pjSbno" name="pjSbno" maxlength="2"
+            <input type="text" v-model="obSearch.pjSbno" class="form-control" id="pjSbno" name="pjSbno" maxlength="2"
               placeholder="Enter Project Subnumber">
           </div>
         </div>
         <div class="row">
           <div class="col-md-4 form-group">
-            <input type="number" class="form-control" id="processCode" name="processCode"
-              placeholder="Enter Process Code">
+            <input type="number" v-model="obSearch.processCode" class="form-control" id="processCode" name="processCode"
+              placeholder="Enter Process Code" min="0">
           </div>
           <div class="col-md-4 form-group">
-            <input type="text" class="form-control" id="ymFrom" name="ymFrom" maxlength="6" placeholder="YM From">
+            <input type="text" v-model="obSearch.ymFrom" class="form-control" id="ymFrom" name="ymFrom"
+              placeholder="YM From">
           </div>
           <div class="col-md-4 form-group">
-            <input type="text" class="form-control" id="ymTo" name="ymTo" maxlength="6" placeholder="YM To">
+            <input type="text" v-model="obSearch.ymTo" class="form-control" id="ymTo" name="ymTo" placeholder="YM To">
           </div>
         </div>
         <button type="submit" class="btn btn-primary mb-3">Search</button>
@@ -87,11 +88,18 @@
         </div>
       </div>
     </div>
+    <div>
+    <!-- Other components -->
+    <button @click="showToast">Show Toast</button>
+    <!-- Toast component -->
+    <Toast v-if="show" :title="toastTitle" :message="toastMessage" :type="toastType" />
+  </div>
   </div>
 </template>
 
 
 <script>
+
 export default {
   data() {
     return {
@@ -109,6 +117,14 @@ export default {
         workingDate: new Date().toISOString().slice(0, 19) + 'Z',
         actualManHour: ""
       },
+      obSearch: {
+        actCode: "",
+        pjCode: "",
+        pjSbno: "",
+        processCode: "",
+        ymFrom: "",
+        ymTo: ""
+      }
 
     }
   },
@@ -124,10 +140,22 @@ export default {
   },
   mounted() {
     this.load(); // Gọi phương thức khi component được mounted
+    if (this.$route.params.msgUpdate) {
+      console.log(this.$route.params.msgUpdate);
+    } else {
+      console.log(this.$route.params.msgUpdate);
+
+    }
   },
   methods: {
     load() {
-      fetch('https://localhost:5001/api/v1/export/manhourinput', {
+      const params = Object.entries(this.obSearch)
+        .filter(([key, value]) => value !== "")
+        .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+        .join("&");
+
+      const url = `https://localhost:5001/api/v1/manhourinput?${params}`;
+      fetch(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -157,10 +185,9 @@ export default {
       this.currentPage = pageNumber;
     },
     handleRowDblClick(item) {
-      // Đưa dữ liệu của hàng vào object bạn muốn
+      // Đưa dữ liệu của hàng vào object
       this.selectedItem = item;
-      // Bạn cũng có thể làm gì đó với dữ liệu, ví dụ: hiển thị chi tiết
-      //console.log(this.selectedItem);
+
       this.$router.push({ name: 'product.create', params: { selectedItem: item } });
       //this.$router.push('/product/create');
     },

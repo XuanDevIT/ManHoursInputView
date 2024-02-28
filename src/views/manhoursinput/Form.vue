@@ -23,7 +23,7 @@
           <label for="inputPassword" class="col-sm-3 col-form-label">Act Code</label>
           <div class="col-sm-9">
             <input type="text" class="form-control" v-model="manhour.actCode"
-              v-bind:class="{ 'is-invalid': errors.actCode }" :readonly="this.isChangeDataPutAPI.flag == true"/>
+              v-bind:class="{ 'is-invalid': errors.actCode }" :readonly="this.isChangeDataPutAPI.flag == true" />
             <div class="invalid-feedback text-left" v-if="errors.actCode">
               {{ errors.actCode }}
             </div>
@@ -34,7 +34,7 @@
           <label for="inputPassword" class="col-sm-3 col-form-label">Project Code</label>
           <div class="col-sm-9">
             <input type="text" class="form-control" v-model="manhour.pjCode"
-              v-bind:class="{ 'is-invalid': errors.pjCode }" :readonly="this.isChangeDataPutAPI.flag == true"/>
+              v-bind:class="{ 'is-invalid': errors.pjCode }" :readonly="this.isChangeDataPutAPI.flag == true" />
             <div class="invalid-feedback text-left" v-if="errors.pjCode">
               {{ errors.pjCode }}
             </div>
@@ -45,7 +45,7 @@
           <label for="inputPassword" class="col-sm-3 col-form-label">Project Sbno</label>
           <div class="col-sm-9">
             <input type="text" class="form-control" v-model="manhour.pjSbno"
-              v-bind:class="{ 'is-invalid': errors.pjSbno }" :readonly="this.isChangeDataPutAPI.flag == true"/>
+              v-bind:class="{ 'is-invalid': errors.pjSbno }" :readonly="this.isChangeDataPutAPI.flag == true" />
             <div class="invalid-feedback text-left" v-if="errors.pjSbno">
               {{ errors.pjSbno }}
             </div>
@@ -78,7 +78,8 @@
           <label for="inputPassword" class="col-sm-3 col-form-label">Working Date</label>
           <div class="col-sm-9">
             <input type="text" class="form-control" v-model="manhour.workingDate"
-              v-bind:class="{ 'is-invalid': errors.workingDate }" :readonly="manhour.inputType === 'Monthly' || this.isChangeDataPutAPI.flag == true" />
+              v-bind:class="{ 'is-invalid': errors.workingDate }"
+              :readonly="manhour.inputType === 'Monthly' || this.isChangeDataPutAPI.flag == true" />
             <div class="invalid-feedback text-left" v-if="errors.workingDate">
               {{ errors.workingDate }}
             </div>
@@ -100,7 +101,8 @@
           <label for="inputPassword" class="col-sm-3 col-form-label"></label>
           <div class="col-sm-9 text-left">
             <button type="submit" class="btn btn-primary">Save</button> &nbsp;
-            <button type="reset" class="btn btn-danger">Cancel</button>
+            <button type="reset" class="btn btn-danger"
+              v-bind:class="{ 'd-none': this.$route.params.selectedItem }">Cancel</button>
             <div style="height: 16px;"></div>
             <div v-if="info.msg_success" class="alert alert-success" role="alert">
               Insert success!!!
@@ -112,6 +114,7 @@
         </div>
       </form>
     </div>
+    
   </div>
 </template>
 
@@ -146,13 +149,15 @@ export default {
       },
       isChangeDataPutAPI: {
         flag: "",
-      }
+      },
+      msgUpdate:""
+      
     };
   },
   mounted() {
     // Được gọi sau khi component đã được mount vào DOM
     console.log('Component has been mounted!');
-    // Tại đây, bạn có thể thực hiện yêu cầu dữ liệu hoặc các thao tác DOM khác
+    // Tại đây, mình có thể thực hiện yêu cầu dữ liệu hoặc các thao tác DOM khác
     this.loadData();
   },
   methods: {
@@ -244,11 +249,11 @@ export default {
 
       return isValid;
     },
+
     create() {
-      console.log(JSON.stringify(this.manhour));
       if (this.validate()) {
         // Sử dụng fetch API để thực hiện yêu cầu POST
-        fetch("https://localhost:5001/api/v1/export/manhourinput", {
+        fetch("https://localhost:5001/api/v1/manhourinput", {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -296,11 +301,11 @@ export default {
           });
       }
     },
+   
     update() {
-      console.log(JSON.stringify(this.manhour));
       if (this.validate()) {
         // Sử dụng fetch API để thực hiện yêu cầu POST
-        fetch("https://localhost:5001/api/v1/export/manhourinput", {
+        fetch("https://localhost:5001/api/v1/manhourinput", {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -333,7 +338,9 @@ export default {
             setTimeout(() => {
               this.info.msg_success = "";
             }, 2000);
-            this.$router.push({ name: 'product.list'});
+             //this.$router.push({ name: 'product.list' });
+           
+            this.$router.push({ name: 'product.list', params: { msgUpdate: 'true' } });
 
 
           })
@@ -365,6 +372,16 @@ export default {
         processCode: "",
         ym: "",
         workingDate: new Date().toISOString().slice(0, 19) + 'Z',
+        actualManHour: ""
+      };
+      this.errors = {
+        inputType: "",
+        actCode: "",
+        pjCode: "",
+        pjSbno: "",
+        processCode: "",
+        ym: "",
+        workingDate: "",
         actualManHour: ""
       };
 
