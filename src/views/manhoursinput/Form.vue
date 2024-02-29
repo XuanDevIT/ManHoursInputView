@@ -1,120 +1,123 @@
 <template>
-  <div class="product-info">
-    <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-      <h3 class="display-5">Man Hours Input Infomation</h3>
-      <router-link to="/product">Back</router-link>
+  <div>
+    <div class="product-info">
+      <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+        <h3 class="display-5">Man Hours Input Infomation</h3>
+        <router-link to="/product">Back</router-link>
+      </div>
+
+      <div class="container pt-3">
+        <form @submit.prevent="save()" @reset.prevent="cancel()">
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Input Type</label>
+            <div class="col-sm-9">
+              <select class="form-control" v-model="manhour.inputType" :disabled="this.isChangeDataPutAPI.flag == true">
+                <option value="Daily" selected>Daily</option>
+                <option value="Monthly">Monthly</option>
+              </select>
+              <div class="invalid-feedback text-left" v-if="errors.inputType">
+                {{ errors.inputType }}
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Act Code</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" v-model="manhour.actCode"
+                v-bind:class="{ 'is-invalid': errors.actCode }" :readonly="this.isChangeDataPutAPI.flag == true" />
+              <div class="invalid-feedback text-left" v-if="errors.actCode">
+                {{ errors.actCode }}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Project Code</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" v-model="manhour.pjCode"
+                v-bind:class="{ 'is-invalid': errors.pjCode }" :readonly="this.isChangeDataPutAPI.flag == true" />
+              <div class="invalid-feedback text-left" v-if="errors.pjCode">
+                {{ errors.pjCode }}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Project Sbno</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" v-model="manhour.pjSbno"
+                v-bind:class="{ 'is-invalid': errors.pjSbno }" :readonly="this.isChangeDataPutAPI.flag == true" />
+              <div class="invalid-feedback text-left" v-if="errors.pjSbno">
+                {{ errors.pjSbno }}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Process Code</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" v-model="manhour.processCode"
+                v-bind:class="{ 'is-invalid': errors.processCode }" :readonly="this.isChangeDataPutAPI.flag == true" />
+              <div class="invalid-feedback text-left" v-if="errors.processCode">
+                {{ errors.processCode }}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">YM</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" v-model="manhour.ym" v-bind:class="{ 'is-invalid': errors.ym }"
+                :readonly="this.isChangeDataPutAPI.flag == true" />
+              <div class="invalid-feedback text-left" v-if="errors.ym">
+                {{ errors.ym }}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Working Date</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" v-model="manhour.workingDate"
+                v-bind:class="{ 'is-invalid': errors.workingDate }"
+                :readonly="manhour.inputType === 'Monthly' || this.isChangeDataPutAPI.flag == true" />
+              <div class="invalid-feedback text-left" v-if="errors.workingDate">
+                {{ errors.workingDate }}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Actual ManHour</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" v-model="manhour.actualManHour"
+                v-bind:class="{ 'is-invalid': errors.actualManHour }" />
+              <div class="invalid-feedback text-left" v-if="errors.actualManHour">
+                {{ errors.actualManHour }}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label"></label>
+            <div class="col-sm-9 text-left">
+              <button type="submit" class="btn btn-primary">Save</button> &nbsp;
+              <button type="reset" class="btn btn-danger"
+                v-bind:class="{ 'd-none': this.$route.params.selectedItem }">Cancel</button>
+              <div style="height: 16px;"></div>
+              <div v-if="info.msg_success" class="alert alert-success" role="alert">
+                Insert success!!!
+              </div>
+              <div v-if="info.msg_error" class="alert alert-danger" role="alert">
+                Insert Fail!!!
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
     </div>
 
-    <div class="container pt-3">
-      <form @submit.prevent="save()" @reset.prevent="cancel()">
-        <div class="form-group row">
-          <label for="inputPassword" class="col-sm-3 col-form-label">Input Type</label>
-          <div class="col-sm-9">
-            <select class="form-control" v-model="manhour.inputType" :disabled="this.isChangeDataPutAPI.flag == true">
-              <option value="Daily" selected>Daily</option>
-              <option value="Monthly">Monthly</option>
-            </select>
-            <div class="invalid-feedback text-left" v-if="errors.inputType">
-              {{ errors.inputType }}
-            </div>
-          </div>
-        </div>
-        <div class="form-group row">
-          <label for="inputPassword" class="col-sm-3 col-form-label">Act Code</label>
-          <div class="col-sm-9">
-            <input type="text" class="form-control" v-model="manhour.actCode"
-              v-bind:class="{ 'is-invalid': errors.actCode }" :readonly="this.isChangeDataPutAPI.flag == true" />
-            <div class="invalid-feedback text-left" v-if="errors.actCode">
-              {{ errors.actCode }}
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group row">
-          <label for="inputPassword" class="col-sm-3 col-form-label">Project Code</label>
-          <div class="col-sm-9">
-            <input type="text" class="form-control" v-model="manhour.pjCode"
-              v-bind:class="{ 'is-invalid': errors.pjCode }" :readonly="this.isChangeDataPutAPI.flag == true" />
-            <div class="invalid-feedback text-left" v-if="errors.pjCode">
-              {{ errors.pjCode }}
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group row">
-          <label for="inputPassword" class="col-sm-3 col-form-label">Project Sbno</label>
-          <div class="col-sm-9">
-            <input type="text" class="form-control" v-model="manhour.pjSbno"
-              v-bind:class="{ 'is-invalid': errors.pjSbno }" :readonly="this.isChangeDataPutAPI.flag == true" />
-            <div class="invalid-feedback text-left" v-if="errors.pjSbno">
-              {{ errors.pjSbno }}
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group row">
-          <label for="inputPassword" class="col-sm-3 col-form-label">Process Code</label>
-          <div class="col-sm-9">
-            <input type="text" class="form-control" v-model="manhour.processCode"
-              v-bind:class="{ 'is-invalid': errors.processCode }" :readonly="this.isChangeDataPutAPI.flag == true" />
-            <div class="invalid-feedback text-left" v-if="errors.processCode">
-              {{ errors.processCode }}
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group row">
-          <label for="inputPassword" class="col-sm-3 col-form-label">YM</label>
-          <div class="col-sm-9">
-            <input type="text" class="form-control" v-model="manhour.ym" v-bind:class="{ 'is-invalid': errors.ym }"
-              :readonly="this.isChangeDataPutAPI.flag == true" />
-            <div class="invalid-feedback text-left" v-if="errors.ym">
-              {{ errors.ym }}
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group row">
-          <label for="inputPassword" class="col-sm-3 col-form-label">Working Date</label>
-          <div class="col-sm-9">
-            <input type="text" class="form-control" v-model="manhour.workingDate"
-              v-bind:class="{ 'is-invalid': errors.workingDate }"
-              :readonly="manhour.inputType === 'Monthly' || this.isChangeDataPutAPI.flag == true" />
-            <div class="invalid-feedback text-left" v-if="errors.workingDate">
-              {{ errors.workingDate }}
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group row">
-          <label for="inputPassword" class="col-sm-3 col-form-label">Actual ManHour</label>
-          <div class="col-sm-9">
-            <input type="text" class="form-control" v-model="manhour.actualManHour"
-              v-bind:class="{ 'is-invalid': errors.actualManHour }" />
-            <div class="invalid-feedback text-left" v-if="errors.actualManHour">
-              {{ errors.actualManHour }}
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group row">
-          <label for="inputPassword" class="col-sm-3 col-form-label"></label>
-          <div class="col-sm-9 text-left">
-            <button type="submit" class="btn btn-primary">Save</button> &nbsp;
-            <button type="reset" class="btn btn-danger"
-              v-bind:class="{ 'd-none': this.$route.params.selectedItem }">Cancel</button>
-            <div style="height: 16px;"></div>
-            <div v-if="info.msg_success" class="alert alert-success" role="alert">
-              Insert success!!!
-            </div>
-            <div v-if="info.msg_error" class="alert alert-danger" role="alert">
-              Insert Fail!!!
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
-    
   </div>
 </template>
 
@@ -150,23 +153,19 @@ export default {
       isChangeDataPutAPI: {
         flag: "",
       },
-      msgUpdate:""
-      
+      msgConfirmUpdate: ""
+
     };
   },
   mounted() {
-    // Được gọi sau khi component đã được mount vào DOM
-    console.log('Component has been mounted!');
-    // Tại đây, mình có thể thực hiện yêu cầu dữ liệu hoặc các thao tác DOM khác
     this.loadData();
   },
   methods: {
     loadData() {
-      // Yêu cầu dữ liệu hoặc thực hiện các thao tác khởi tạo tại đây
       if (this.$route.params.selectedItem) {
         this.isChangeDataPutAPI.flag = true;
 
-        console.log(this.$route.params.selectedItem);
+        //console.log(this.$route.params.selectedItem);
         this.manhour = this.$route.params.selectedItem;
         this.manhour.inputType = "Daily";
       }
@@ -236,6 +235,7 @@ export default {
         isValid = false;
       }
 
+      console.log(this.manhour.actualManHour);
       if (!this.manhour.actualManHour) {
         this.errors.actualManHour = "Actual Man Hour is required!!!";
         isValid = false;
@@ -245,9 +245,11 @@ export default {
       } else if (this.manhour.actualManHour.length > 11) {
         this.errors.actualManHour = "Actual Man Hour must be less than 11 characters!!!";
         isValid = false;
+      } else if (this.manhour.actualManHour < 0) {
+        this.errors.actualManHour = "Actual Man Hour must be greater than or equal to 0!!!";
+        isValid = false;
       }
-
-      return isValid;
+       return isValid;
     },
 
     create() {
@@ -301,7 +303,7 @@ export default {
           });
       }
     },
-   
+
     update() {
       if (this.validate()) {
         // Sử dụng fetch API để thực hiện yêu cầu POST
@@ -338,8 +340,8 @@ export default {
             setTimeout(() => {
               this.info.msg_success = "";
             }, 2000);
-             //this.$router.push({ name: 'product.list' });
-           
+            //this.$router.push({ name: 'product.list' });
+
             this.$router.push({ name: 'product.list', params: { msgUpdate: 'true' } });
 
 
@@ -358,7 +360,14 @@ export default {
     },
     save() {
       if (this.$route.params.selectedItem) {
-        this.update();
+        if (this.manhour.actualManHour == 0) {
+          if (confirm("Are you sure you want to delete this data?") == true) {
+            this.update();
+          }
+        } else {
+          this.update();
+        }
+        // this.update();
       } else {
         this.create();
       }

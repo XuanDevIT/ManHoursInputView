@@ -2,6 +2,13 @@
   <div>
     <!-- Search Form -->
     <div class="container mt-5">
+      <div class="toast custom-toast " v-bind:class="{'d-none': this.showMsg.msgSuccess}" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000"
+        style="position: fixed; top: 20px; right: 20px; min-width: 250px">
+        <div class="toast-body">
+          <i class="bi-check-circle-fill"></i>
+          Success Toast!
+        </div>
+      </div>
       <h2>Search</h2>
       <form @submit.prevent="load()">
         <div class="row">
@@ -88,12 +95,6 @@
         </div>
       </div>
     </div>
-    <div>
-    <!-- Other components -->
-    <button @click="showToast">Show Toast</button>
-    <!-- Toast component -->
-    <Toast v-if="show" :title="toastTitle" :message="toastMessage" :type="toastType" />
-  </div>
   </div>
 </template>
 
@@ -106,7 +107,10 @@ export default {
       manHourInput: [],
       currentPage: 1,
       rowsPerPage: 60,
-      showConfirmModal: false,
+      showMsg: {
+        msgSuccess: true,
+        msgFailure: "",
+      },
       selectedItem: {
         inputType: "Daily",
         actCode: "",
@@ -139,11 +143,16 @@ export default {
     }
   },
   mounted() {
+    this.showMsg.msgSuccess = true;
+    console.log(this.showMsg.msgSuccess)
     this.load(); // Gọi phương thức khi component được mounted
     if (this.$route.params.msgUpdate) {
-      console.log(this.$route.params.msgUpdate);
+      this.showMsg.msgSuccess = false;
+      setTimeout(() => {
+        this.showMsg.msgSuccess = true;
+      },3000)
     } else {
-      console.log(this.$route.params.msgUpdate);
+      this.showMsg.msgFailure = false;
 
     }
   },
@@ -195,3 +204,38 @@ export default {
 }
 
 </script>
+
+<style scoped>
+.custom-toast {
+  background-color: #5cb85c;
+  /* Màu nền toast */
+  color: white;
+  /* Màu chữ */
+  border-radius: 20px;
+  /* Bo tròn góc */
+  padding: 10px 20px;
+  /* Padding cho toast */
+  display: flex;
+  /* Để các items nằm trên một hàng */
+  align-items: center;
+  /* Căn giữa các items theo chiều dọc */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+  margin-top: 150px;
+  /* Bóng đổ nhẹ */
+}
+
+.custom-toast .bi-check-circle-fill {
+  font-size: 1.5rem;
+  /* Điều chỉnh kích thước icon */
+  margin-right: 10px;
+  /* Khoảng cách giữa icon và text */
+}
+
+.custom-toast img {
+  height: 24px;
+  /* Điều chỉnh kích thước icon Android */
+  margin-left: 10px;
+  /* Khoảng cách giữa text và icon Android */
+}
+</style>
