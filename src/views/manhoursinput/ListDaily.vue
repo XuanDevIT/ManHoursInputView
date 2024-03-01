@@ -159,7 +159,7 @@ export default {
   methods: {
     load() {
       const params = Object.entries(this.obSearch)
-        .filter(([key, value]) => value !== "")
+        .filter(([value]) => value !== "")
         .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
         .join("&");
 
